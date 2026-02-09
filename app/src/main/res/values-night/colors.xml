@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand colors adjusted for Dark Mode (Lighter for contrast) -->
+    <color name="unipi_red">#FF5252</color> 
+    <color name="unipi_blue">#90CAF9</color>
+    <color name="unipi_blue_dark">#BBDEFB</color>
+
+    <!-- System Colors -->
+    <color name="system_background_primary">#000000</color>
+    <color name="system_background_secondary">#1C1C1E</color>
+    
+    <!-- Text Colors -->
+    <color name="label_primary">#FFFFFF</color>
+    <color name="label_secondary">#EBEBF5</color>
+    <color name="label_tertiary">#EBEBF5</color>
+    <color name="text_inverted">#000000</color> <!-- Inverted text on buttons -->
+    
+    <!-- UI Elements -->
+    <color name="separator">#38383A</color>
+    <color name="input_background">#1C1C1E</color>
+
+    <color name="tint_primary">@color/unipi_red</color>
+    <color name="tint_secondary">@color/unipi_blue</color>
+    
+    <color name="price_color">#81C784</color>
+</resources>

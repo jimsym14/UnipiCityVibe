@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="unipi_red">#AB092F</color>
+    <color name="unipi_blue">#002D51</color>
+    <color name="unipi_blue_dark">#001F38</color>
+    <color name="system_background_primary">#F2F2F7</color>
+    <color name="system_background_secondary">#FFFFFF</color>
+    <color name="label_primary">#000000</color>
+    <color name="label_secondary">#3C3C43</color>
+    <color name="label_tertiary">#8E8E93</color>
+    <color name="text_inverted">#FFFFFF</color>
+    <color name="separator">#C6C6C8</color>
+    <color name="input_background">#FFFFFF</color>
+
+    <color name="tint_primary">@color/unipi_red</color>
+    <color name="tint_secondary">@color/unipi_blue</color>
+    
+    <color name="price_color">#388E3C</color>
+</resources>
