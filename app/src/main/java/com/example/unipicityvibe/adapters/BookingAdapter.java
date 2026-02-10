@@ -42,7 +42,6 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
         
         if (item.timestamp > 0) {
             java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
-            // Using context from itemView to get string resource
             holder.tvDate.setText(holder.itemView.getContext().getString(R.string.date_prefix) + sdf.format(new java.util.Date(item.timestamp)));
         } else {
             holder.tvDate.setText("");

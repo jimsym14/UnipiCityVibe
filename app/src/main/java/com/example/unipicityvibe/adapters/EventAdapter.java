@@ -43,7 +43,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
         holder.tvTitle.setText(currentEvent.getTitle());
 
-        // Αν είναι δωρεάν, το δείχνουμε πράσινο
         if (currentEvent.getTicketPrice() == 0) {
             holder.tvPrice.setText("FREE");
             holder.tvPrice.setTextColor(context.getColor(R.color.price_color));
@@ -53,7 +52,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         }
 
         if (currentEvent.getTimestamp() > 0) {
-             // Μορφοποίηση ημερομηνίας
             java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MMM d • HH:mm", Locale.ENGLISH);
             holder.tvDate.setText(sdf.format(new java.util.Date(currentEvent.getTimestamp())).toUpperCase());
         }
@@ -61,7 +59,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         if (currentEvent.getDistanceMeter() > 0) {
             holder.tvDistance.setText(currentEvent.getFormattedDistance());
             holder.tvDistance.setVisibility(View.VISIBLE);
-            // Δείχνουμε πράσινο αν είναι κοντά (<2km)
+            // πρασινο αν ειναι κοντα (<2km)
             if (currentEvent.getDistanceMeter() < 2000) {
                 holder.tvDistance.setTextColor(context.getColor(R.color.price_color));
             } else {
@@ -74,9 +72,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         String imageName = currentEvent.getImageResName();
         String imageUrl = currentEvent.getImageUrl();
         
-        // Φόρτωση εικόνας με Glide αν υπάρχει URL, αλλιώς από πόρους
         if (imageUrl != null && !imageUrl.isEmpty()) {
-            com.bumptech.glide.Glide.with(context).load(imageUrl).into(holder.imgEvent);
+            com.bumptech.glide.Glide.with(context)
+                .load(imageUrl)
+                .override(600, 400) // downsample για γρηγοροτερο loading
+                .centerCrop()
+                .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.ALL)
+                .into(holder.imgEvent);
         } else if (imageName != null && !imageName.isEmpty()) {
             @SuppressLint("DiscouragedApi")
             int resId = context.getResources().getIdentifier(imageName, "drawable", context.getPackageName());
@@ -100,6 +102,40 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     @Override
     public int getItemCount() {
         return eventList.size();
+    }
+    
+    // μεθοδος για αποδοτικη ενημερωση λιστας χωρις κολληματα
+    public void updateEvents(List<Event> newEvents) {
+        androidx.recyclerview.widget.DiffUtil.DiffResult diffResult = androidx.recyclerview.widget.DiffUtil.calculateDiff(new androidx.recyclerview.widget.DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return eventList.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return newEvents.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                // ελεγχος βασει ID
+                return eventList.get(oldItemPosition).getEventId().equals(newEvents.get(newItemPosition).getEventId());
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                Event oldEvent = eventList.get(oldItemPosition);
+                Event newEvent = newEvents.get(newItemPosition);
+                // ελεγχος, ειδικα για την αποσταση που αλλαζει συχνα
+                return oldEvent.getTitle().equals(newEvent.getTitle()) &&
+                       oldEvent.getTimestamp() == newEvent.getTimestamp() &&
+                       Math.abs(oldEvent.getDistanceMeter() - newEvent.getDistanceMeter()) < 1.0; 
+            }
+        });
+        
+        this.eventList = new java.util.ArrayList<>(newEvents);
+        diffResult.dispatchUpdatesTo(this);
     }
 
     public static class EventViewHolder extends RecyclerView.ViewHolder {

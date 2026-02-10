@@ -34,7 +34,6 @@ public class Settings extends Fragment {
         rgFont = view.findViewById(R.id.rgFont);
         Button btnLogout = view.findViewById(R.id.btnLogout);
 
-        // Στοιχεία Προφίλ
         com.google.firebase.auth.FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             tvEmail.setText("Email: " + user.getEmail());
@@ -43,20 +42,34 @@ public class Settings extends Fragment {
         btnUpdate.setOnClickListener(v -> {
             String newPass = etNewPassword.getText().toString();
             if (!newPass.isEmpty()) {
-                if (user != null) {
-                    user.updatePassword(newPass)
-                        .addOnSuccessListener(a -> {
-                            Toast.makeText(getContext(), getString(R.string.msg_password_updated), Toast.LENGTH_SHORT).show();
-                            etNewPassword.setText("");
-                        })
-                        .addOnFailureListener(e -> Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                if (user != null && user.getEmail() != null) {
+                    // re-auth πριν αλλαξουμε κωδικο (απαιτηση firebase)
+                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext());
+                    builder.setTitle("Verify identity");
+                    final EditText inputPass = new EditText(requireContext());
+                    inputPass.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    inputPass.setHint("Current password");
+                    builder.setView(inputPass);
+                    builder.setPositiveButton("OK", (dialog, which) -> {
+                        String currentPass = inputPass.getText().toString();
+                        com.google.firebase.auth.AuthCredential credential = com.google.firebase.auth.EmailAuthProvider.getCredential(user.getEmail(), currentPass);
+                        user.reauthenticate(credential).addOnSuccessListener(aVoid -> {
+                            user.updatePassword(newPass)
+                                .addOnSuccessListener(a -> {
+                                    Toast.makeText(getContext(), getString(R.string.msg_password_updated), Toast.LENGTH_SHORT).show();
+                                    etNewPassword.setText("");
+                                })
+                                .addOnFailureListener(e -> Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                        }).addOnFailureListener(e -> Toast.makeText(getContext(), "Wrong password", Toast.LENGTH_SHORT).show());
+                    });
+                    builder.setNegativeButton("Cancel", null);
+                    builder.show();
                 }
             } else {
                 Toast.makeText(getContext(), getString(R.string.msg_enter_password), Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Εμφάνιση (Θέμα & Γραμματοσειρά & Ειδοποιήσεις)
         SharedPreferences prefs = requireActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
         boolean isDark = prefs.getBoolean("dark_mode", false);
         boolean isLargeFont = prefs.getBoolean("large_font", false);
@@ -68,34 +81,30 @@ public class Settings extends Fragment {
         com.google.android.material.switchmaterial.SwitchMaterial swNotifications = view.findViewById(R.id.swNotifications);
         swNotifications.setChecked(areNotificationsEnabled);
         
-        // Αλλαγή ρύθμισης ειδοποιήσεων
         swNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> {
             prefs.edit().putBoolean("notifications_enabled", isChecked).apply();
         });
 
-        // Αλλαγή Θέματος (Dark Mode)
         rgTheme.setOnCheckedChangeListener((group, checkedId) -> {
             boolean dark = (checkedId == R.id.rbThemeDark);
             prefs.edit().putBoolean("dark_mode", dark).apply();
             
-            // Εφαρμόζουμε αμέσως
+            // εφαρμοζουμε αμεσως χωρις restart
             int mode = dark ? androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES 
                             : androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO;
             androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(mode);
         });
 
-        // Αλλαγή Μεγέθους Γραμματοσειράς
         rgFont.setOnCheckedChangeListener((group, checkedId) -> {
             boolean large = (checkedId == R.id.rbFontLarge);
             boolean current = prefs.getBoolean("large_font", false);
             if (current != large) {
                  prefs.edit().putBoolean("large_font", large).apply();
                  Toast.makeText(getContext(), "Restart app to fully apply font changes", Toast.LENGTH_SHORT).show();
-                 requireActivity().recreate(); // Κάνουμε restart το activity
+                 requireActivity().recreate();
             }
         });
 
-        // --- ΓΛΩΣΣΑ (Language) ---
         android.widget.RadioGroup rgLanguage = view.findViewById(R.id.rgLanguage);
         String currentLang = prefs.getString("app_lang", "en");
         if (currentLang.equals("el")) {
@@ -113,7 +122,6 @@ public class Settings extends Fragment {
 
             if (!newLang.equals(currentLang)) {
                  prefs.edit().putString("app_lang", newLang).apply();
-                 // Αλλαγή γλώσσας και restart
                  setAppLocale(requireActivity(), newLang);
                  requireActivity().recreate();
             }

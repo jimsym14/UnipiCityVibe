@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">UnipiCityVibe</string>
-    
-    <!-- Login -->
+
     <string name="login_title">Log In</string>
     <string name="app_title">Unipi Vibe</string>
     <string name="login_subtitle">Sign in to your campus account</string>
@@ -9,15 +8,13 @@
     <string name="password_hint">Password</string>
     <string name="create_account">Create an Account</string>
     <string name="login_button">Log In</string>
-    
-    <!-- Register -->
+
     <string name="register_title">Create Account</string>
     <string name="register_subtitle">Join the CityVibe community</string>
     <string name="confirm_password_hint">Confirm Password</string>
     <string name="signup_button">Sign Up</string>
     <string name="goto_login">Already have an account? Log In</string>
-    
-    <!-- Settings -->
+
     <string name="settings_title">Settings</string>
     <string name="profile_section">Profile</string>
     <string name="email_prefix">Email: </string>
@@ -34,8 +31,7 @@
     <string name="font_large">Large</string>
     <string name="language_section">Language</string>
     <string name="logout_button">Logout</string>
-    
-    <!-- Create Event -->
+
     <string name="create_event_title">Create Event</string>
     <string name="event_title_hint">Event Title</string>
     <string name="event_desc_hint">Description</string>
@@ -47,24 +43,21 @@
     <string name="lat_hint">Lat</string>
     <string name="lon_hint">Lon</string>
     <string name="create_event_button">Create Event</string>
-    
-    <!-- Event Details -->
+
     <string name="book_ticket_button">Book Ticket</string>
     <string name="date_prefix">Date: </string>
     <string name="price_prefix">Price: </string>
     <string name="view_on_map">View on Map</string>
     <string name="free_price">FREE</string>
-    
-    <!-- Nav -->
+
     <string name="nav_events">Events</string>
     <string name="nav_bookings">My Bookings</string>
     <string name="nav_settings">Settings</string>
-    
+
     <string name="title_home">Discover Events</string>
     <string name="title_my_bookings">My Bookings</string>
     <string name="title_login">Login</string>
 
-    <!-- Messages / Toasts -->
     <string name="msg_password_updated">Password Updated</string>
     <string name="msg_enter_password">Enter a new password</string>
     <string name="msg_welcome">Welcome</string>
@@ -75,8 +68,7 @@
     <string name="msg_fill_all">Please fill all fields</string>
     <string name="msg_event_created">Event Created!</string>
     <string name="action_listen_desc">Listen</string>
-    
-    <!-- Other Languages -->
+
     <string name="lang_en">English</string>
     <string name="lang_el">Ελληνικά</string>
     <string name="lang_es">Español</string>

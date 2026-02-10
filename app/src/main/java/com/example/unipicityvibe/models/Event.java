@@ -1,7 +1,5 @@
 package com.example.unipicityvibe.models;
 
-import java.math.BigDecimal;
-
 public class Event {
     private String eventId;
     private String title;
@@ -9,7 +7,7 @@ public class Event {
     private long timestamp;
     private double ticketPrice;
     private String imageResName;
-    private String imageUrl; // New field for linked images
+    private String imageUrl;
     private EventLocation location;
     private float distanceMeter;
 

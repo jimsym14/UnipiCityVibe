@@ -58,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+        // αν ειναι ηδη συνδεδεμενος παμε κατευθειαν στο main
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
             updateUI(currentUser);
@@ -79,7 +80,6 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // Login μέσω Firebase
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override

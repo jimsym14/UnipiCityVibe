@@ -32,7 +32,7 @@ public class CreateEvent extends Fragment {
 
         etTitle = view.findViewById(R.id.etTitle);
         etDesc = view.findViewById(R.id.etDesc);
-        etImageUrl = view.findViewById(R.id.etImageUrl); // New field
+        etImageUrl = view.findViewById(R.id.etImageUrl);
         etPrice = view.findViewById(R.id.etPrice);
         etLat = view.findViewById(R.id.etLat);
         etLon = view.findViewById(R.id.etLon);
@@ -48,13 +48,12 @@ public class CreateEvent extends Fragment {
 
     private void showDatePicker() {
         java.util.Calendar calendar = java.util.Calendar.getInstance();
-        // Πρώτα διαλέγουμε Ημερομηνία
+        // πρωτα ημερομηνια, μετα ωρα
         new android.app.DatePickerDialog(getContext(), (view, year, month, dayOfMonth) -> {
             calendar.set(java.util.Calendar.YEAR, year);
             calendar.set(java.util.Calendar.MONTH, month);
             calendar.set(java.util.Calendar.DAY_OF_MONTH, dayOfMonth);
             
-            // Μετά διαλέγουμε Ώρα
             new android.app.TimePickerDialog(getContext(), (timeView, hourOfDay, minute) -> {
                 calendar.set(java.util.Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar.set(java.util.Calendar.MINUTE, minute);
@@ -88,7 +87,6 @@ public class CreateEvent extends Fragment {
         String id = databaseEvents.push().getKey();
         EventLocation location = new EventLocation(lat, lon); 
         
-        // Constructor: String eventId, String title, String description, long timestamp, double ticketPrice, String imageResName, String imageUrl, EventLocation location
         Event event = new Event(id, title, desc, selectedTimestamp, price, "img_tech", imageUrl, location);
         
         if (id != null) {

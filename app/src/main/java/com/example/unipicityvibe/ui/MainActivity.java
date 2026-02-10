@@ -33,27 +33,23 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private android.widget.TextView mainToolbarTitle;
 
-    // Location & Notification globals tailored for MainActivity hosting fragments
-    // Ideally these should be in a service or managed better, but keeping it simple as requested
     private FusedLocationProviderClient fusedLocationClient;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
     private static final String CHANNEL_ID = "nearby_events_channel";
-    private static final float NOTIFICATION_RADIUS_METERS = 200; // 200m as per specs
+    private static final float NOTIFICATION_RADIUS_METERS = 200;
     private boolean hasNotified = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Apply Preferences before content view
         android.content.SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
         
-        // --- Εφαρμογή Γλώσσας ---
+        // εφαρμογη γλωσσας πριν φορτωσει το layout
         String lang = prefs.getString("app_lang", "en");
         java.util.Locale locale = new java.util.Locale(lang);
         java.util.Locale.setDefault(locale);
         android.content.res.Configuration config = new android.content.res.Configuration();
         config.setLocale(locale);
         getResources().updateConfiguration(config, getResources().getDisplayMetrics());
-        // -----------------------
 
         boolean isDark = prefs.getBoolean("dark_mode", false);
         boolean isLargeFont = prefs.getBoolean("large_font", false);
@@ -65,9 +61,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (isLargeFont) {
-            // Simple way to scale font effectively for "Student Project" level
-            // setTheme(R.style.Theme_UnipiCityVibe_LargeText); 
-            
             android.content.res.Configuration info = new android.content.res.Configuration(getResources().getConfiguration());
             info.fontScale = 1.3f;
             getResources().updateConfiguration(info, getResources().getDisplayMetrics());
@@ -77,13 +70,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            // Should be handled in splash or here, but just in case
         }
 
         createNotificationChannel();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         checkLocationPermissionAndGetLocation();
-        startNearbyCheck(); // Start checking for nearby events in background (simplified)
+        startNearbyCheck();
 
         mainToolbarTitle = findViewById(R.id.mainToolbarTitle);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -115,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         }
         
-        // --- Voice Command Logic ---
         final androidx.activity.result.ActivityResultLauncher<android.content.Intent> voiceLauncher = registerForActivityResult(
             new androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -153,11 +144,8 @@ public class MainActivity extends AppCompatActivity {
                 android.widget.Toast.makeText(this, "Voice recognition not available", android.widget.Toast.LENGTH_SHORT).show();
             }
         });
-        
-        // Remove FAB setup from here if it's now part of the header and doesn't need special margin handling, 
-        // but the logic remains the same. The ID is the same, so finding it works.
 
-        // Έλεγχος αν ανοίξαμε από ειδοποίηση
+        // αν ηρθαμε απο notification ανοιγουμε το event
         if (getIntent() != null && getIntent().hasExtra("open_event_id")) {
             String eventId = getIntent().getStringExtra("open_event_id");
             fetchAndShowEvent(eventId);
@@ -180,12 +168,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // --- Λογική για Τοποθεσία & Ειδοποιήσεις ---
-
     private void checkLocationPermissionAndGetLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            // Ζητάμε άδεια για το GPS αν δεν την έχουμε
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     LOCATION_PERMISSION_REQUEST_CODE);
@@ -197,7 +182,6 @@ public class MainActivity extends AppCompatActivity {
         db.addValueEventListener(new ValueEventListener() {
              @Override
              public void onDataChange(@NonNull DataSnapshot snapshot) {
-                 // Έλεγχος αν ο χρήστης θέλει ειδοποιήσεις
                  android.content.SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
                  if (!prefs.getBoolean("notifications_enabled", true)) {
                      return;
@@ -206,20 +190,18 @@ public class MainActivity extends AppCompatActivity {
                  if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                      return;
                  }
-                 // Παίρνουμε την τελευταία τοποθεσία και τσεκάρουμε αν είμαστε κοντά σε event
                  fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
                      if (location == null) return;
                      for (DataSnapshot s : snapshot.getChildren()) {
                          Event e = s.getValue(Event.class);
                          if (e != null && e.getLocation() != null) {
                              float[] res = new float[1];
-                             // Υπολογισμός απόστασης (res[0])
                              Location.distanceBetween(location.getLatitude(), location.getLongitude(),
                                      e.getLocation().getLatitude(), e.getLocation().getLongitude(), res);
                              
-                             // Αν είναι κάτω από 200 μέτρα και δεν έχουμε ξαναστείλει ειδοποίηση
+                             // αν ειμαστε εντος 200m και δεν εχουμε ξαναστειλει
                              if (res[0] < NOTIFICATION_RADIUS_METERS && !hasNotified) {
-                                 sendNearbyEventNotification(e); // Περνάμε το event
+                                 sendNearbyEventNotification(e);
                                  hasNotified = true;
                                  break; 
                              }
@@ -234,14 +216,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void sendNearbyEventNotification(Event event) {
          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // Για νέα Android θέλει έξτρα άδεια για ειδοποιήσεις
+            // αναγκαιο για android 13+ (POST_NOTIFICATIONS permission)
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 2002);
                 return;
             }
         }
         
-        // Δημιουργία Intent για να ανοίξει το συγκεκριμένο event
         android.content.Intent intent = new android.content.Intent(this, MainActivity.class);
         intent.putExtra("open_event_id", event.getEventId());
         intent.setFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK | android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -253,13 +234,13 @@ public class MainActivity extends AppCompatActivity {
                 .setContentTitle("Event Nearby: " + event.getTitle())
                 .setContentText("You are within 200m of " + event.getTitle() + "!")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(pendingIntent) // Συνδέουμε το click με το intent
+                .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
         NotificationManagerCompat.from(this).notify(100, builder.build());
     }
 
     private void createNotificationChannel() {
-        // Υποχρεωτικό για Android 8+
+        // υποχρεωτικο για android 8+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Nearby", NotificationManager.IMPORTANCE_DEFAULT);
             getSystemService(NotificationManager.class).createNotificationChannel(channel);

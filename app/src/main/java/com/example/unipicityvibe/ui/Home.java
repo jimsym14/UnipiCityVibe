@@ -45,18 +45,17 @@ public class Home extends Fragment {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
 
         recyclerView = view.findViewById(R.id.recyclerEvents);
-        recyclerView = view.findViewById(R.id.recyclerEvents);
         
-        // Calculate appropriate span count (1 for phone, 2+ for tablet)
+        // υπολογισμος στηλων αναλογα με το πλατος οθονης (tablet vs κινητο)
         android.util.DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-        int spanCount = (int) (dpWidth / 400); // 400dp per item width approx
+        int spanCount = (int) (dpWidth / 400);
         if (spanCount < 1) spanCount = 1;
 
         recyclerView.setLayoutManager(new androidx.recyclerview.widget.GridLayoutManager(getContext(), spanCount));
         
         int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.grid_spacing);
-        if (spacingInPixels == 0) spacingInPixels = 32; // Fallback if dimen not found
+        if (spacingInPixels == 0) spacingInPixels = 32;
         
         recyclerView.addItemDecoration(new com.example.unipicityvibe.utils.GridSpacingItemDecoration(spanCount, spacingInPixels, true));
         eventList = new ArrayList<>();
@@ -81,17 +80,17 @@ public class Home extends Fragment {
         databaseEvents.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                eventList.clear();
+                List<Event> newEvents = new ArrayList<>();
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     try {
                         Event event = postSnapshot.getValue(Event.class);
                         if (event != null) {
-                            eventList.add(event);
+                            newEvents.add(event);
                         }
                     } catch (Exception e) {}
                 }
+                eventList = newEvents;
                 calculateDistances();
-                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -111,21 +110,24 @@ public class Home extends Fragment {
     }
 
     private void calculateDistances() {
-        if (userCurrentLocation == null || eventList.isEmpty()) return;
-        for (Event event : eventList) {
-            if (event.getLocation() != null) {
-                float[] results = new float[1];
-                // Υπολογίζουμε την απόσταση από εμάς μέχρι το event
-                Location.distanceBetween(
-                        userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude(),
-                        event.getLocation().getLatitude(), event.getLocation().getLongitude(),
-                        results
-                );
-                event.setDistanceMeter(results[0]);
+        if (eventList.isEmpty()) return;
+
+        if (userCurrentLocation != null) {
+            for (Event event : eventList) {
+                if (event.getLocation() != null) {
+                    float[] results = new float[1];
+                    Location.distanceBetween(
+                            userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude(),
+                            event.getLocation().getLatitude(), event.getLocation().getLongitude(),
+                            results
+                    );
+                    event.setDistanceMeter(results[0]);
+                }
             }
+            // ταξινομηση απο κοντινοτερο σε πιο μακρινο
+            Collections.sort(eventList, (o1, o2) -> Float.compare(o1.getDistanceMeter(), o2.getDistanceMeter()));
         }
-        // Ταξινομούμε τα events από το πιο κοντινό στο πιο μακρινό
-        Collections.sort(eventList, (o1, o2) -> Float.compare(o1.getDistanceMeter(), o2.getDistanceMeter()));
-        adapter.notifyDataSetChanged();
+        
+        adapter.updateEvents(new ArrayList<>(eventList));
     }
 }

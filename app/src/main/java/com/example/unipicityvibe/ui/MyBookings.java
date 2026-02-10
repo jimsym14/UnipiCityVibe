@@ -38,18 +38,16 @@ public class MyBookings extends Fragment {
         View view = inflater.inflate(R.layout.my_bookings, container, false);
 
         recyclerView = view.findViewById(R.id.recyclerBookings);
-        recyclerView = view.findViewById(R.id.recyclerBookings);
         
-        // Calculate appropriate span count (1 for phone, 2+ for tablet)
         android.util.DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-        int spanCount = (int) (dpWidth / 400); // 400dp per item width approx
+        int spanCount = (int) (dpWidth / 400);
         if (spanCount < 1) spanCount = 1;
         
         recyclerView.setLayoutManager(new androidx.recyclerview.widget.GridLayoutManager(getContext(), spanCount));
         
         int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.grid_spacing);
-        if (spacingInPixels == 0) spacingInPixels = 32; // Fallback
+        if (spacingInPixels == 0) spacingInPixels = 32;
         
         recyclerView.addItemDecoration(new com.example.unipicityvibe.utils.GridSpacingItemDecoration(spanCount, spacingInPixels, true));
         bookingList = new ArrayList<>();
@@ -65,6 +63,7 @@ public class MyBookings extends Fragment {
     private void loadBookings() {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         
+        // φιλτραρουμε μονο τις κρατησεις του τρεχοντα χρηστη
         dbBookings.orderByChild("userId").equalTo(userId).addValueEventListener(new ValueEventListener() {
              @Override
              public void onDataChange(@NonNull DataSnapshot snapshot) {

@@ -70,7 +70,7 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        // Δημιουργία χρήστη στο Firebase
+        // δημιουργια χρηστη στο firebase
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {

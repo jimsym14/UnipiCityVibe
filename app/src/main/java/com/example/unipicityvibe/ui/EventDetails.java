@@ -34,12 +34,10 @@ public class EventDetails extends BottomSheetDialogFragment {
         
         tts = new android.speech.tts.TextToSpeech(getContext(), status -> {
             if (status == android.speech.tts.TextToSpeech.SUCCESS) {
-                // Try to set language corresponding to app pref, or default to locale
-                // For simplicity, we use the default device language or English
                  int result = tts.setLanguage(Locale.getDefault());
                  if (result == android.speech.tts.TextToSpeech.LANG_MISSING_DATA 
                      || result == android.speech.tts.TextToSpeech.LANG_NOT_SUPPORTED) {
-                     // Fallback
+                     // fallback σε αγγλικα αν δεν υποστηριζεται η γλωσσα
                      tts.setLanguage(Locale.ENGLISH);
                  }
             }
@@ -145,7 +143,6 @@ public class EventDetails extends BottomSheetDialogFragment {
             });
         }
 
-        // Βάζουμε την εικόνα
         String imageUrl = getArguments().getString(ARG_IMAGE_URL);
         String imageResName = getArguments().getString(ARG_IMAGE_RES_NAME);
         
@@ -171,13 +168,13 @@ public class EventDetails extends BottomSheetDialogFragment {
 
         if (btnMap != null) {
             btnMap.setOnClickListener(v -> {
-                // Ανοίγουμε Google Maps ή Browser με τις συντεταγμένες
                 String uri = String.format(Locale.ENGLISH, "geo:%f,%f?q=%f,%f(%s)", lat, lon, lat, lon, title);
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                 intent.setPackage("com.google.android.apps.maps");
                 if (intent.resolveActivity(requireActivity().getPackageManager()) != null) {
                     startActivity(intent);
                 } else {
+                     // αν δεν υπαρχει google maps ανοιγουμε browser
                      startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/search/?api=1&query=" + lat + "," + lon)));
                 }
             });
@@ -188,13 +185,15 @@ public class EventDetails extends BottomSheetDialogFragment {
 
     private void bookTicket(String eventId, String eventTitle) {
         DatabaseReference db = FirebaseDatabase.getInstance().getReference("bookings");
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); 
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         String bookingId = db.push().getKey();
         
         long timestamp = System.currentTimeMillis();
         
         java.util.Map<String, Object> booking = new java.util.HashMap<>();
         booking.put("userId", userId);
+        booking.put("userEmail", userEmail);
         booking.put("eventId", eventId);
         booking.put("eventTitle", eventTitle);
         booking.put("timestamp", timestamp);
@@ -204,7 +203,7 @@ public class EventDetails extends BottomSheetDialogFragment {
              db.child(bookingId).setValue(booking)
                  .addOnSuccessListener(a -> {
                      Toast.makeText(getContext(), getString(R.string.msg_booked_success), Toast.LENGTH_SHORT).show();
-                     dismiss(); // Close bottom sheet
+                     dismiss();
                  })
                  .addOnFailureListener(e -> Toast.makeText(getContext(), getString(R.string.msg_booking_failed), Toast.LENGTH_SHORT).show());
         }

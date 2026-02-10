@@ -27,10 +27,6 @@
             android:textStyle="bold"
             android:layout_marginBottom="12dp"/>
 
-<!-- ... existing views ... -->
-
-
-
         <TextView
             android:id="@+id/tvDetailDate"
             android:layout_width="match_parent"

@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">UnipiCityVibe</string>
-    
-    <!-- Login -->
+
     <string name="login_title">Σύνδεση</string>
     <string name="app_title">Unipi Vibe</string>
     <string name="login_subtitle">Συνδεθείτε στον λογαριασμό σας</string>
@@ -9,15 +8,13 @@
     <string name="password_hint">Κωδικός Πρόσβασης</string>
     <string name="create_account">Δημιουργία Λογαριασμού</string>
     <string name="login_button">Σύνδεση</string>
-    
-    <!-- Register -->
+
     <string name="register_title">Εγγραφή</string>
     <string name="register_subtitle">Γίνετε μέλος της κοινότητας</string>
     <string name="confirm_password_hint">Επιβεβαίωση Κωδικού</string>
     <string name="signup_button">Εγγραφή</string>
     <string name="goto_login">Έχετε λογαριασμό; Σύνδεση</string>
-    
-    <!-- Settings -->
+
     <string name="settings_title">Ρυθμίσεις</string>
     <string name="profile_section">Προφίλ</string>
     <string name="email_prefix">Email: </string>
@@ -34,8 +31,7 @@
     <string name="font_large">Μεγάλο</string>
     <string name="language_section">Γλώσσα</string>
     <string name="logout_button">Αποσύνδεση</string>
-    
-    <!-- Create Event -->
+
     <string name="create_event_title">Νέα Εκδήλωση</string>
     <string name="event_title_hint">Τίτλος Εκδήλωσης</string>
     <string name="event_desc_hint">Περιγραφή</string>
@@ -47,24 +43,21 @@
     <string name="lat_hint">Γεωγρ. Πλάτος</string>
     <string name="lon_hint">Γεωγρ. Μήκος</string>
     <string name="create_event_button">Δημιουργία</string>
-    
-    <!-- Event Details -->
+
     <string name="book_ticket_button">Κράτηση Εισιτηρίου</string>
     <string name="date_prefix">Ημ/νία: </string>
     <string name="price_prefix">Τιμή: </string>
     <string name="view_on_map">Προβολή στο Χάρτη</string>
     <string name="free_price">ΔΩΡΕΑΝ</string>
-    
-    <!-- Nav -->
+
     <string name="nav_events">Εκδηλώσεις</string>
     <string name="nav_bookings">Κρατήσεις</string>
     <string name="nav_settings">Ρυθμίσεις</string>
-    
+
     <string name="title_home">Ανακαλύψτε</string>
     <string name="title_my_bookings">Οι Κρατήσεις μου</string>
     <string name="title_login">Σύνδεση</string>
-    
-    <!-- Messages / Toasts -->
+
     <string name="msg_password_updated">Ο κωδικός ενημερώθηκε</string>
     <string name="msg_enter_password">Εισάγετε νέο κωδικό</string>
     <string name="msg_welcome">Καλώς ήρθατε</string>
@@ -74,8 +67,7 @@
     <string name="msg_booking_cancelled">Η κράτηση ακυρώθηκε</string>
     <string name="msg_fill_all">Συμπληρώστε όλα τα πεδία</string>
     <string name="msg_event_created">Η εκδήλωση δημιουργήθηκε!</string>
-    
-    <!-- Other Languages -->
+
     <string name="action_listen_desc">Listen</string>
     <string name="lang_en">English</string>
     <string name="lang_el">Ελληνικά</string>
