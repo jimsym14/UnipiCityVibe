@@ -59,6 +59,7 @@ public class CreateEvent extends Fragment {
                 calendar.set(java.util.Calendar.MINUTE, minute);
                 
                 selectedTimestamp = calendar.getTimeInMillis();
+                // ενημερωση UI με την επιλεγμενη ημερομηνια/ωρα
                 java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault());
                 tvSelectedDate.setText(sdf.format(calendar.getTime()));
                 
@@ -75,12 +76,14 @@ public class CreateEvent extends Fragment {
         String latStr = etLat.getText().toString();
         String lonStr = etLon.getText().toString();
 
+        // ελεγχος υποχρεωτικων πεδιων
         if (title.isEmpty() || desc.isEmpty() || priceStr.isEmpty() || selectedTimestamp == 0) {
             Toast.makeText(getContext(), getString(R.string.msg_fill_all), Toast.LENGTH_SHORT).show();
             return;
         }
 
         double price = Double.parseDouble(priceStr);
+        // 0.0 αν δεν δοθουν συντεταγμενες
         double lat = latStr.isEmpty() ? 0.0 : Double.parseDouble(latStr);
         double lon = lonStr.isEmpty() ? 0.0 : Double.parseDouble(lonStr);
 
@@ -89,6 +92,7 @@ public class CreateEvent extends Fragment {
         
         Event event = new Event(id, title, desc, selectedTimestamp, price, "img_tech", imageUrl, location);
         
+        // Αποθήκευση στη Firebase
         if (id != null) {
             databaseEvents.child(id).setValue(event)
                 .addOnSuccessListener(aVoid -> {

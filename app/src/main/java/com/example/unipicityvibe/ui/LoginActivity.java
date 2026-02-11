@@ -69,6 +69,7 @@ public class LoginActivity extends AppCompatActivity {
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
+        // ελεγχος πεδιων (να μην ειναι κενα)
         if (TextUtils.isEmpty(email)) {
             etEmail.setError(getString(R.string.msg_fill_all));
             etEmail.requestFocus();
@@ -85,10 +86,12 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            // Επιτυχής σύνδεση
                             FirebaseUser user = mAuth.getCurrentUser();
                             Toast.makeText(LoginActivity.this, getString(R.string.msg_welcome), Toast.LENGTH_SHORT).show();
                             updateUI(user);
                         } else {
+                            // Αποτυχία σύνδεσης
                             Toast.makeText(LoginActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }

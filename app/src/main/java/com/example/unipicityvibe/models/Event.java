@@ -1,15 +1,17 @@
 package com.example.unipicityvibe.models;
 
+// Κλάση μοντέλου για τα Events
+// Περιέχει όλες τις πληροφορίες που χρειάζεται ένα event για να εμφανιστεί στη λίστα και στο χάρτη
 public class Event {
     private String eventId;
     private String title;
     private String description;
     private long timestamp;
     private double ticketPrice;
-    private String imageResName;
-    private String imageUrl;
-    private EventLocation location;
-    private float distanceMeter;
+    private String imageResName; // Όνομα εικόνας στα resources (αν υπάρχει)
+    private String imageUrl; // URL εικόνας (αν φορτώνεται από δίκτυο)
+    private EventLocation location; // Τοποθεσία του event
+    private float distanceMeter; // Απόσταση από τον χρήστη (υπολογίζεται)
 
 
     public Event() {
@@ -98,6 +100,7 @@ public class Event {
         this.distanceMeter = distanceMeter;
     }
 
+    // Βοηθητική μέθοδος για μορφοποίηση της απόστασης σε km ή m
     public String getFormattedDistance() {
         if (distanceMeter >= 1000) {
             return String.format(java.util.Locale.US, "%.1f km", distanceMeter / 1000);

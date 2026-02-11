@@ -32,12 +32,12 @@ public class EventDetails extends BottomSheetDialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        // αρχικοποιηση text to speech 
         tts = new android.speech.tts.TextToSpeech(getContext(), status -> {
             if (status == android.speech.tts.TextToSpeech.SUCCESS) {
                  int result = tts.setLanguage(Locale.getDefault());
                  if (result == android.speech.tts.TextToSpeech.LANG_MISSING_DATA 
                      || result == android.speech.tts.TextToSpeech.LANG_NOT_SUPPORTED) {
-                     // fallback σε αγγλικα αν δεν υποστηριζεται η γλωσσα
                      tts.setLanguage(Locale.ENGLISH);
                  }
             }
@@ -191,15 +191,18 @@ public class EventDetails extends BottomSheetDialogFragment {
         
         long timestamp = System.currentTimeMillis();
         
+        // Δημιουργία αντικειμένου κράτησης
         java.util.Map<String, Object> booking = new java.util.HashMap<>();
         booking.put("userId", userId);
         booking.put("userEmail", userEmail);
         booking.put("eventId", eventId);
         booking.put("eventTitle", eventTitle);
         booking.put("timestamp", timestamp);
+        // τυχαίος κωδικός εισιτηρίου
         booking.put("code", java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase());
 
         if (bookingId != null) {
+             // Αποθήκευση στη Firebase
              db.child(bookingId).setValue(booking)
                  .addOnSuccessListener(a -> {
                      Toast.makeText(getContext(), getString(R.string.msg_booked_success), Toast.LENGTH_SHORT).show();

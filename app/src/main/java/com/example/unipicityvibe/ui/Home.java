@@ -10,12 +10,12 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.unipicityvibe.R;
 import com.example.unipicityvibe.adapters.EventAdapter;
 import com.example.unipicityvibe.models.Event;
+import com.example.unipicityvibe.utils.GridSpacing;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.database.DataSnapshot;
@@ -57,7 +57,8 @@ public class Home extends Fragment {
         int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.grid_spacing);
         if (spacingInPixels == 0) spacingInPixels = 32;
         
-        recyclerView.addItemDecoration(new com.example.unipicityvibe.utils.GridSpacingItemDecoration(spanCount, spacingInPixels, true));
+        // χρηση GridSpacing.java για σωστα κενα αναμεσα στις καρτες
+        recyclerView.addItemDecoration(new GridSpacing(spanCount, spacingInPixels, true));
         eventList = new ArrayList<>();
         adapter = new EventAdapter(getContext(), eventList); 
         recyclerView.setAdapter(adapter);
@@ -109,6 +110,7 @@ public class Home extends Fragment {
         }
     }
 
+    // Υπολογισμός αποστάσεων για όλα τα events
     private void calculateDistances() {
         if (eventList.isEmpty()) return;
 
@@ -116,6 +118,7 @@ public class Home extends Fragment {
             for (Event event : eventList) {
                 if (event.getLocation() != null) {
                     float[] results = new float[1];
+                    // χρηση της μεθόδου distanceBetween
                     Location.distanceBetween(
                             userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude(),
                             event.getLocation().getLatitude(), event.getLocation().getLongitude(),
@@ -128,6 +131,7 @@ public class Home extends Fragment {
             Collections.sort(eventList, (o1, o2) -> Float.compare(o1.getDistanceMeter(), o2.getDistanceMeter()));
         }
         
+        // ενημερωση του adapter με τη νεα ταξινομημενη λιστα
         adapter.updateEvents(new ArrayList<>(eventList));
     }
 }

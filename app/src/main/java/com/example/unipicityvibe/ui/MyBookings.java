@@ -4,15 +4,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.unipicityvibe.R;
+import com.example.unipicityvibe.utils.GridSpacing;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -49,7 +48,7 @@ public class MyBookings extends Fragment {
         int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.grid_spacing);
         if (spacingInPixels == 0) spacingInPixels = 32;
         
-        recyclerView.addItemDecoration(new com.example.unipicityvibe.utils.GridSpacingItemDecoration(spanCount, spacingInPixels, true));
+        recyclerView.addItemDecoration(new GridSpacing(spanCount, spacingInPixels, true));
         bookingList = new ArrayList<>();
         adapter = new BookingAdapter(bookingList, this::deleteBooking);
         recyclerView.setAdapter(adapter);
@@ -63,7 +62,7 @@ public class MyBookings extends Fragment {
     private void loadBookings() {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         
-        // φιλτραρουμε μονο τις κρατησεις του τρεχοντα χρηστη
+        // Φιλτράρισμα κρατήσεων του τρέχοντας χρήστη
         dbBookings.orderByChild("userId").equalTo(userId).addValueEventListener(new ValueEventListener() {
              @Override
              public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -88,6 +87,7 @@ public class MyBookings extends Fragment {
         });
     }
 
+    // Διαγραφη κρατησης απο τη βαση δεδομενων
     private void deleteBooking(String bookingId) {
         dbBookings.child(bookingId).removeValue()
                 .addOnSuccessListener(a -> Toast.makeText(getContext(), getString(R.string.msg_booking_cancelled), Toast.LENGTH_SHORT).show()) 

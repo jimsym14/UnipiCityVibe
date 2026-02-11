@@ -43,6 +43,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
         holder.tvTitle.setText(currentEvent.getTitle());
 
+        // Έλεγχος αν η τιμή είναι 0 για εμφάνιση "FREE"
         if (currentEvent.getTicketPrice() == 0) {
             holder.tvPrice.setText("FREE");
             holder.tvPrice.setTextColor(context.getColor(R.color.price_color));
@@ -56,6 +57,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             holder.tvDate.setText(sdf.format(new java.util.Date(currentEvent.getTimestamp())).toUpperCase());
         }
 
+        // Διαχείριση αποστασης χρηστη απο το event
         if (currentEvent.getDistanceMeter() > 0) {
             holder.tvDistance.setText(currentEvent.getFormattedDistance());
             holder.tvDistance.setVisibility(View.VISIBLE);
@@ -91,6 +93,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
              holder.imgEvent.setImageResource(android.R.drawable.ic_menu_gallery);
         }
 
+        // λεπτομερειες event με BottomSheet
         holder.itemView.setOnClickListener(v -> {
             if (context instanceof AppCompatActivity) {
                 EventDetails bottomSheet = EventDetails.newInstance(currentEvent);
@@ -127,7 +130,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
                 Event oldEvent = eventList.get(oldItemPosition);
                 Event newEvent = newEvents.get(newItemPosition);
-                // ελεγχος, ειδικα για την αποσταση που αλλαζει συχνα
+                // ελεγχος περιεχομενου, ειδικα για την αποσταση που αλλαζει συχνα λογω GPS
                 return oldEvent.getTitle().equals(newEvent.getTitle()) &&
                        oldEvent.getTimestamp() == newEvent.getTimestamp() &&
                        Math.abs(oldEvent.getDistanceMeter() - newEvent.getDistanceMeter()) < 1.0; 

@@ -55,16 +55,19 @@ public class RegisterActivity extends AppCompatActivity {
         String password = etPassword.getText().toString().trim();
         String confirmPass = etConfirmPassword.getText().toString().trim();
 
+        // Ελεγχος οτι ολα τα πεδια ειναι συμπληρωμενα
         if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
             Toast.makeText(this, getString(R.string.msg_fill_all), Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // Τουλαχιστον 6 χαρακτηρες για Firebase
         if (password.length() < 6) {
             etPassword.setError("Password must be at least 6 characters");
             return;
         }
 
+        // Επιβεβαιωση οτι οι κωδικοι ταιριαζουν
         if (!password.equals(confirmPass)) {
             etConfirmPassword.setError("Passwords do not match");
             return;
@@ -74,6 +77,7 @@ public class RegisterActivity extends AppCompatActivity {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
+                        // επιτυχης εγγραφη
                         FirebaseUser user = mAuth.getCurrentUser();
                         Toast.makeText(RegisterActivity.this, getString(R.string.msg_welcome) + " " + user.getEmail(), Toast.LENGTH_SHORT).show();
 
@@ -82,6 +86,7 @@ public class RegisterActivity extends AppCompatActivity {
                         startActivity(intent);
                         finish();
                     } else {
+                        // μηνυμα αποτυχιας
                         Toast.makeText(RegisterActivity.this, getString(R.string.msg_registration_failed) + ": " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });

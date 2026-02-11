@@ -52,8 +52,11 @@ public class Settings extends Fragment {
                     builder.setView(inputPass);
                     builder.setPositiveButton("OK", (dialog, which) -> {
                         String currentPass = inputPass.getText().toString();
+                        // Δημιουργία credential για επαλήθευση
                         com.google.firebase.auth.AuthCredential credential = com.google.firebase.auth.EmailAuthProvider.getCredential(user.getEmail(), currentPass);
+                        
                         user.reauthenticate(credential).addOnSuccessListener(aVoid -> {
+                            // Αν η επαλήθευση είναι επιτυχής, προχωράμε στην αλλαγή κωδικού
                             user.updatePassword(newPass)
                                 .addOnSuccessListener(a -> {
                                     Toast.makeText(getContext(), getString(R.string.msg_password_updated), Toast.LENGTH_SHORT).show();
@@ -89,7 +92,6 @@ public class Settings extends Fragment {
             boolean dark = (checkedId == R.id.rbThemeDark);
             prefs.edit().putBoolean("dark_mode", dark).apply();
             
-            // εφαρμοζουμε αμεσως χωρις restart
             int mode = dark ? androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES 
                             : androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO;
             androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(mode);

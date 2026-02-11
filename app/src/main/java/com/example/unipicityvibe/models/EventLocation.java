@@ -1,5 +1,6 @@
 package com.example.unipicityvibe.models;
 
+// Απλη κλαση για την αποθηκευση συντεταγμενων
 public class EventLocation {
     private double latitude;
     private double longitude;

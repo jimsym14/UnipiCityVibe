@@ -79,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
 
         mainToolbarTitle = findViewById(R.id.mainToolbarTitle);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+        
+        // Listener για την πλοήγηση μέσω του κάτω μενού
         bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFragment = null;
             int itemId = item.getItemId();
@@ -182,20 +184,25 @@ public class MainActivity extends AppCompatActivity {
         db.addValueEventListener(new ValueEventListener() {
              @Override
              public void onDataChange(@NonNull DataSnapshot snapshot) {
+                 // Έλεγχος αν ο χρήστης έχει ενεργοποιήσει τις ειδοποιήσεις
                  android.content.SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
                  if (!prefs.getBoolean("notifications_enabled", true)) {
                      return;
                  }
 
+                 // Έλεγχος άδειας τοποθεσίας
                  if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                      return;
                  }
+                 
+                 // Λήψη τρέχουσας τοποθεσίας
                  fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
                      if (location == null) return;
                      for (DataSnapshot s : snapshot.getChildren()) {
                          Event e = s.getValue(Event.class);
                          if (e != null && e.getLocation() != null) {
                              float[] res = new float[1];
+                             // Υπολογισμός απόστασης
                              Location.distanceBetween(location.getLatitude(), location.getLongitude(),
                                      e.getLocation().getLatitude(), e.getLocation().getLongitude(), res);
                              
