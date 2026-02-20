@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.unipicityvibe.R;
 import com.example.unipicityvibe.adapters.EventAdapter;
 import com.example.unipicityvibe.models.Event;
-import com.example.unipicityvibe.utils.GridSpacing;
+import com.example.unipicityvibe.utils.GridSpacingItemDecoration;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.database.DataSnapshot;
@@ -57,8 +57,8 @@ public class Home extends Fragment {
         int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.grid_spacing);
         if (spacingInPixels == 0) spacingInPixels = 32;
         
-        // χρηση GridSpacing.java για σωστα κενα αναμεσα στις καρτες
-        recyclerView.addItemDecoration(new GridSpacing(spanCount, spacingInPixels, true));
+        // χρηση GridSpacingItemDecoration.java για σωστα κενα αναμεσα στις καρτες
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacingInPixels, true));
         eventList = new ArrayList<>();
         adapter = new EventAdapter(getContext(), eventList); 
         recyclerView.setAdapter(adapter);

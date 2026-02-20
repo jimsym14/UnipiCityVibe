@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.unipicityvibe.R;
-import com.example.unipicityvibe.utils.GridSpacing;
+import com.example.unipicityvibe.utils.GridSpacingItemDecoration;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -48,7 +48,7 @@ public class MyBookings extends Fragment {
         int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.grid_spacing);
         if (spacingInPixels == 0) spacingInPixels = 32;
         
-        recyclerView.addItemDecoration(new GridSpacing(spanCount, spacingInPixels, true));
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacingInPixels, true));
         bookingList = new ArrayList<>();
         adapter = new BookingAdapter(bookingList, this::deleteBooking);
         recyclerView.setAdapter(adapter);
